@@ -147,8 +147,9 @@ export async function POST(request: Request) {
     lang: emailLang,
   })
 
-  // Fire-and-forget — don't fail the booking if email delivery fails
-  resend.emails.send({ from: FROM, to: email.trim(), subject, html }).catch(() => {})
+  // Await so the serverless function doesn't terminate before Resend completes.
+  // Swallow errors so a failed email never blocks a confirmed booking.
+  await resend.emails.send({ from: FROM, to: email.trim(), subject, html }).catch(() => {})
 
   return Response.json({ success: true, id: docRef.id }, { status: 201 })
 }

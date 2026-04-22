@@ -16,13 +16,18 @@ function base(content: string): string {
       <table width="100%" style="max-width:520px;background:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #e5e7eb;">
         <!-- Header -->
         <tr>
-          <td style="background:#111827;padding:24px 32px;text-align:center;">
-            <img src="https://pr-scheduler-silk.vercel.app/cotw.png" alt="${LOGO_TEXT}" width="120" style="display:block;margin:0 auto 12px;border-radius:12px;" />
+          <td style="background:#111827;padding:24px 32px;">
             <p style="margin:0;color:#ffffff;font-size:18px;font-weight:700;">${LOGO_TEXT}</p>
           </td>
         </tr>
         <!-- Body -->
         <tr><td style="padding:32px;">${content}</td></tr>
+        <!-- Banner image -->
+        <tr>
+          <td style="padding:0;line-height:0;">
+            <img src="https://pr-scheduler-silk.vercel.app/cotw.png" alt="${LOGO_TEXT}" width="520" style="display:block;width:100%;height:auto;" />
+          </td>
+        </tr>
         <!-- Footer -->
         <tr>
           <td style="background:#f9fafb;border-top:1px solid #f3f4f6;padding:20px 32px;">
