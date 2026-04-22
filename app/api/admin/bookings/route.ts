@@ -19,14 +19,17 @@ export async function GET(request: Request) {
   const snapshot = await adminDb.collection('bookings').where('day', '==', day).get()
 
   const bookings = snapshot.docs
-    .map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-      createdAt: doc.data().createdAt?.toDate().toISOString() ?? null,
-    }))
+    .map((doc) => {
+      const data = doc.data() as { slot: string; room: number; [key: string]: unknown }
+      return {
+        id: doc.id,
+        ...data,
+        createdAt: (data.createdAt as { toDate?: () => Date } | null)?.toDate?.()?.toISOString() ?? null,
+      }
+    })
     .sort((a, b) => {
       if (a.slot !== b.slot) return a.slot.localeCompare(b.slot)
-      return (a.room as number) - (b.room as number)
+      return a.room - b.room
     })
 
   return Response.json({ bookings })
