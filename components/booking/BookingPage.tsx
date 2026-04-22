@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { DAYS, DAY_LABELS } from '@/lib/schedule'
 import { useLang } from '@/lib/context/LanguageContext'
 import type { Day, Room, Slot } from '@/lib/types'
@@ -33,11 +34,21 @@ export default function BookingPage() {
 
         {/* Header */}
         <div className="flex items-start justify-between mb-8">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 leading-tight">
-              {t.title[lang]}
-            </h1>
-            <p className="text-sm text-gray-500 mt-1">{t.subtitle[lang]}</p>
+          <div className="flex items-center gap-3">
+            <Image
+              src="/icons/android-chrome-192x192.png"
+              alt="La Cresta de La Ola"
+              width={52}
+              height={52}
+              className="rounded-xl"
+              priority
+            />
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900 leading-tight">
+                {t.title[lang]}
+              </h1>
+              <p className="text-sm text-gray-500 mt-1">{t.subtitle[lang]}</p>
+            </div>
           </div>
           <LangToggle className="shrink-0 ml-4" />
         </div>
