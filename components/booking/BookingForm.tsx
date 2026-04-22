@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { DAY_LABELS, formatSlot } from '@/lib/schedule'
+import { DAY_LABELS, formatSlot, PROVINCES } from '@/lib/schedule'
 import { useLang } from '@/lib/context/LanguageContext'
 import type { Day, Room, Slot } from '@/lib/types'
 
@@ -21,6 +21,8 @@ const t = {
   email: { es: 'Correo electrónico', en: 'Email address' },
   phone: { es: 'Teléfono (opcional)', en: 'Phone (optional)' },
   notes: { es: 'Notas (opcional)', en: 'Notes (optional)' },
+  province: { es: 'Provincia', en: 'Province' },
+  provincePlaceholder: { es: '— Selecciona tu provincia —', en: '— Select your province —' },
   submit: { es: 'Confirmar reservación', en: 'Confirm booking' },
   submitting: { es: 'Reservando...', en: 'Booking...' },
   required: { es: 'Este campo es requerido.', en: 'This field is required.' },
@@ -48,16 +50,18 @@ interface FormState {
   email: string
   phone: string
   notes: string
+  province: string
 }
 
 interface FormErrors {
   name?: string
   email?: string
+  province?: string
 }
 
 export default function BookingForm({ day, room, slot, onBack, onSuccess }: Props) {
   const { lang } = useLang()
-  const [form, setForm] = useState<FormState>({ name: '', email: '', phone: '', notes: '' })
+  const [form, setForm] = useState<FormState>({ name: '', email: '', phone: '', notes: '', province: '' })
   const [errors, setErrors] = useState<FormErrors>({})
   const [apiError, setApiError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
@@ -71,6 +75,7 @@ export default function BookingForm({ day, room, slot, onBack, onSuccess }: Prop
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
       e.email = t.invalidEmail[lang]
     }
+    if (!form.province) e.province = t.required[lang]
     return e
   }
 
@@ -94,6 +99,7 @@ export default function BookingForm({ day, room, slot, onBack, onSuccess }: Prop
           email: form.email.trim(),
           phone: form.phone.trim() || undefined,
           notes: form.notes.trim() || undefined,
+          province: form.province,
           day,
           room,
           slot,
@@ -193,6 +199,26 @@ export default function BookingForm({ day, room, slot, onBack, onSuccess }: Prop
             }`}
           />
           {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
+        </div>
+
+        {/* Province */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-1">
+            {t.province[lang]}
+          </label>
+          <select
+            value={form.province}
+            onChange={(e) => setForm({ ...form, province: e.target.value })}
+            className={`w-full border rounded-xl px-4 py-3 text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+              errors.province ? 'border-red-400' : 'border-gray-300'
+            }`}
+          >
+            <option value="">{t.provincePlaceholder[lang]}</option>
+            {PROVINCES.map((p) => (
+              <option key={p} value={p}>{p}</option>
+            ))}
+          </select>
+          {errors.province && <p className="text-xs text-red-500 mt-1">{errors.province}</p>}
         </div>
 
         {/* Phone */}

@@ -11,7 +11,7 @@ import BookingForm from './BookingForm'
 import CheckReservation from './CheckReservation'
 
 const t = {
-  title: { es: 'Reserva tu Sesión', en: 'Book Your Session' },
+  title: { es: 'Reserva tu Sesión Profética', en: 'Book Your Prophetic Session' },
   subtitle: { es: 'Sesiones proféticas · La Cresta de La Ola', en: 'Prophetic sessions · La Cresta de La Ola' },
   selectDay: { es: 'Selecciona un día', en: 'Select a day' },
   dayPlaceholder: { es: '— Elige un día —', en: '— Choose a day —' },

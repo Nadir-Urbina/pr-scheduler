@@ -16,7 +16,8 @@ function base(content: string): string {
       <table width="100%" style="max-width:520px;background:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #e5e7eb;">
         <!-- Header -->
         <tr>
-          <td style="background:#111827;padding:24px 32px;">
+          <td style="background:#111827;padding:24px 32px;text-align:center;">
+            <img src="https://pr-scheduler-silk.vercel.app/cotw.png" alt="${LOGO_TEXT}" width="120" style="display:block;margin:0 auto 12px;border-radius:12px;" />
             <p style="margin:0;color:#ffffff;font-size:18px;font-weight:700;">${LOGO_TEXT}</p>
           </td>
         </tr>
@@ -102,7 +103,8 @@ export function confirmationEmail({
     </table>
 
     <p style="margin:0 0 12px;font-size:14px;color:#4b5563;line-height:1.6;">${reminder}</p>
-    <p style="margin:0;font-size:14px;color:#4b5563;line-height:1.6;">${record}</p>
+    <p style="margin:0 0 12px;font-size:14px;color:#4b5563;line-height:1.6;">${record}</p>
+    <p style="margin:0;font-size:14px;color:#4b5563;line-height:1.6;">El servicio nocturno inicia en el mismo lugar a las <strong>6:30 PM</strong>. ¡Te esperamos!</p>
   `)
 
   return { subject, html }
@@ -137,7 +139,8 @@ export function reminderEmail({
       </tbody>
     </table>
 
-    <p style="margin:0;font-size:14px;color:#4b5563;line-height:1.6;">Recuerda llegar <strong>10–15 minutos antes</strong>. Las sesiones duran solo 10 minutos.</p>
+    <p style="margin:0 0 12px;font-size:14px;color:#4b5563;line-height:1.6;">Recuerda llegar <strong>10–15 minutos antes</strong>. Las sesiones duran solo 10 minutos.</p>
+    <p style="margin:0;font-size:14px;color:#4b5563;line-height:1.6;">El servicio nocturno inicia en el mismo lugar a las <strong>6:30 PM</strong>. ¡Te esperamos!</p>
   `)
 
   return { subject, html }

@@ -20,6 +20,7 @@ const t = {
   error: { es: 'Error al cargar horarios.', en: 'Failed to load slots.' },
   noSlots: { es: 'No hay horarios disponibles para este día.', en: 'No available slots for this day.' },
   room: { es: 'Sala', en: 'Room' },
+  pickRoom: { es: 'Elige una sala', en: 'Pick a room' },
 }
 
 export default function SlotGrid({ day, onSelect }: Props) {
@@ -65,23 +66,27 @@ export default function SlotGrid({ day, onSelect }: Props) {
   }
 
   return (
-    <div className="space-y-2">
+    <div className="divide-y divide-gray-100 border border-gray-200 rounded-xl overflow-hidden">
       {rows.map(({ slot, availableRooms }) => (
-        <div key={slot} className="flex items-center gap-3 py-1">
-          <span className="text-sm font-mono text-gray-400 w-16 shrink-0">
+        <div key={slot} className="flex items-center gap-3 px-4 py-3 bg-white">
+          <span className="text-sm font-mono text-gray-500 w-16 shrink-0">
             {formatSlot(slot)}
           </span>
-          <div className="flex flex-wrap gap-2">
+          <select
+            defaultValue=""
+            onChange={(e) => {
+              const room = Number(e.target.value) as Room
+              if (room) onSelect(room, slot)
+            }}
+            className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            <option value="" disabled>{t.pickRoom[lang]}</option>
             {availableRooms.map((room) => (
-              <button
-                key={room}
-                onClick={() => onSelect(room, slot)}
-                className="text-sm font-semibold bg-blue-50 text-blue-700 border border-blue-200 rounded-lg px-3 py-2 hover:bg-blue-100 active:scale-95 transition-all"
-              >
+              <option key={room} value={room}>
                 {t.room[lang]} {room}
-              </button>
+              </option>
             ))}
-          </div>
+          </select>
         </div>
       ))}
     </div>

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { DAYS, DAY_LABELS, ROOMS, SLOTS, formatSlot } from '@/lib/schedule'
+import { DAYS, DAY_LABELS, ROOMS, SLOTS, PROVINCES, formatSlot } from '@/lib/schedule'
 import { useLang } from '@/lib/context/LanguageContext'
 import { adminFetch } from '@/lib/admin-fetch'
 import type { Day, Room } from '@/lib/types'
@@ -12,6 +12,7 @@ interface Booking {
   email: string
   phone?: string
   notes?: string
+  province: string
   day: Day
   room: Room
   slot: string
@@ -29,6 +30,7 @@ const t = {
   editTitle: { es: 'Editar reservación', en: 'Edit booking' },
   name: { es: 'Nombre completo', en: 'Full name' },
   email: { es: 'Correo electrónico', en: 'Email' },
+  province: { es: 'Provincia', en: 'Province' },
   phone: { es: 'Teléfono (opcional)', en: 'Phone (optional)' },
   notes: { es: 'Notas (opcional)', en: 'Notes (optional)' },
   day: { es: 'Día', en: 'Day' },
@@ -49,6 +51,7 @@ export default function BookingModal({ booking, defaultDay, onClose, onSaved }: 
   const [email, setEmail] = useState(booking?.email ?? '')
   const [phone, setPhone] = useState(booking?.phone ?? '')
   const [notes, setNotes] = useState(booking?.notes ?? '')
+  const [province, setProvince] = useState(booking?.province ?? '')
   const [day, setDay] = useState<Day>(booking?.day ?? defaultDay)
   const [room, setRoom] = useState<Room>(booking?.room ?? 1)
   const [slot, setSlot] = useState(booking?.slot ?? SLOTS[0])
@@ -71,6 +74,7 @@ export default function BookingModal({ booking, defaultDay, onClose, onSaved }: 
       email: email.trim(),
       phone: phone.trim() || undefined,
       notes: notes.trim() || undefined,
+      province,
       day,
       room,
       slot,
@@ -141,6 +145,18 @@ export default function BookingModal({ booking, defaultDay, onClose, onSaved }: 
               className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-800">
               {SLOTS.map((s) => (
                 <option key={s} value={s}>{formatSlot(s)}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Province */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">{t.province[lang]}</label>
+            <select value={province} onChange={(e) => setProvince(e.target.value)} required
+              className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-800">
+              <option value="">—</option>
+              {PROVINCES.map((p) => (
+                <option key={p} value={p}>{p}</option>
               ))}
             </select>
           </div>

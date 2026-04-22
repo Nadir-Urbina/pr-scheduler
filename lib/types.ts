@@ -13,6 +13,7 @@ export interface Booking {
   email: string
   phone?: string
   notes?: string
+  province: string
   day: Day
   room: Room
   slot: Slot

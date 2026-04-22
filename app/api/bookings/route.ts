@@ -1,5 +1,5 @@
 import { adminDb } from '@/lib/firebase/admin'
-import { DAYS, ROOMS, SLOTS } from '@/lib/schedule'
+import { DAYS, ROOMS, SLOTS, PROVINCES } from '@/lib/schedule'
 import type { Day, NewBooking, Room, Slot } from '@/lib/types'
 import { FieldValue } from 'firebase-admin/firestore'
 import { resend, FROM } from '@/lib/email/resend'
@@ -68,11 +68,12 @@ export async function POST(request: Request) {
     return Response.json({ error: 'invalid_json' }, { status: 400 })
   }
 
-  const { name, email, phone, notes, day, room, slot, lang } = body as Record<string, unknown>
+  const { name, email, phone, notes, province, day, room, slot, lang } = body as Record<string, unknown>
 
   if (
     typeof name !== 'string' || !name.trim() ||
     typeof email !== 'string' || !email.trim() ||
+    typeof province !== 'string' || !province.trim() ||
     typeof day !== 'string' ||
     typeof slot !== 'string' ||
     typeof room !== 'number'
@@ -90,6 +91,10 @@ export async function POST(request: Request) {
 
   if (!SLOTS.includes(slot)) {
     return Response.json({ error: 'validation', field: 'slot' }, { status: 400 })
+  }
+
+  if (!PROVINCES.includes(province as never)) {
+    return Response.json({ error: 'validation', field: 'province' }, { status: 400 })
   }
 
   const submittedName = normalizeName(name)
@@ -120,6 +125,7 @@ export async function POST(request: Request) {
     name: name.trim(),
     email: email.trim(),
     nameNormalized: submittedName,
+    province: province.trim(),
     day: day as NewBooking['day'],
     room: room as NewBooking['room'],
     slot,

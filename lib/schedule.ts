@@ -4,6 +4,18 @@ export const DAYS: Day[] = ['thursday', 'friday', 'saturday']
 
 export const ROOMS: Room[] = [1, 2, 3, 4, 5, 6]
 
+export const PROVINCES = [
+  'Alajuela',
+  'Cartago',
+  'Guanacaste',
+  'Heredia',
+  'Limón',
+  'Puntarenas',
+  'San José',
+] as const
+
+export type Province = typeof PROVINCES[number]
+
 // 15 slots from 15:30 to 17:50, each 10 minutes
 export const SLOTS: Slot[] = Array.from({ length: 15 }, (_, i) => {
   const totalMinutes = 15 * 60 + 30 + i * 10

@@ -47,11 +47,12 @@ export async function POST(request: Request) {
     return Response.json({ error: 'invalid_json' }, { status: 400 })
   }
 
-  const { name, email, phone, notes, day, room, slot } = body as Record<string, unknown>
+  const { name, email, phone, notes, province, day, room, slot } = body as Record<string, unknown>
 
   if (
     typeof name !== 'string' || !name.trim() ||
     typeof email !== 'string' || !email.trim() ||
+    typeof province !== 'string' || !province.trim() ||
     typeof day !== 'string' || !DAYS.includes(day as Day) ||
     typeof slot !== 'string' || !SLOTS.includes(slot) ||
     typeof room !== 'number' || !ROOMS.includes(room as Room)
@@ -75,6 +76,7 @@ export async function POST(request: Request) {
     name: name.trim(),
     email: email.trim(),
     nameNormalized: name.trim().toLowerCase(),
+    province: province.trim(),
     day,
     room,
     slot,

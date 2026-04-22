@@ -1,6 +1,6 @@
 import { adminDb } from '@/lib/firebase/admin'
 import { verifyAdminToken } from '@/lib/admin-auth'
-import { DAYS, ROOMS, SLOTS } from '@/lib/schedule'
+import { DAYS, ROOMS, SLOTS, PROVINCES } from '@/lib/schedule'
 import type { Day, Room } from '@/lib/types'
 
 export async function PUT(request: Request, ctx: RouteContext<'/api/admin/bookings/[id]'>) {
@@ -17,11 +17,13 @@ export async function PUT(request: Request, ctx: RouteContext<'/api/admin/bookin
     return Response.json({ error: 'invalid_json' }, { status: 400 })
   }
 
-  const { name, email, phone, notes, day, room, slot } = body as Record<string, unknown>
+  const { name, email, phone, notes, province, day, room, slot } = body as Record<string, unknown>
 
   if (
     typeof name !== 'string' || !name.trim() ||
     typeof email !== 'string' || !email.trim() ||
+    typeof province !== 'string' || !province.trim() ||
+    !PROVINCES.includes(province as never) ||
     typeof day !== 'string' || !DAYS.includes(day as Day) ||
     typeof slot !== 'string' || !SLOTS.includes(slot) ||
     typeof room !== 'number' || !ROOMS.includes(room as Room)
@@ -45,6 +47,7 @@ export async function PUT(request: Request, ctx: RouteContext<'/api/admin/bookin
     name: name.trim(),
     email: email.trim(),
     nameNormalized: name.trim().toLowerCase(),
+    province: province.trim(),
     day,
     room,
     slot,

@@ -13,6 +13,7 @@ interface Booking {
   email: string
   phone?: string
   notes?: string
+  province: string
   day: Day
   room: Room
   slot: string
@@ -27,6 +28,7 @@ const t = {
   email: { es: 'Correo', en: 'Email' },
   phone: { es: 'Teléfono', en: 'Phone' },
   notes: { es: 'Notas', en: 'Notes' },
+  province: { es: 'Provincia', en: 'Province' },
   actions: { es: 'Acciones', en: 'Actions' },
   noBookings: { es: 'No hay reservaciones para este día.', en: 'No bookings for this day.' },
   loading: { es: 'Cargando...', en: 'Loading...' },
@@ -113,7 +115,7 @@ export default function AdminDashboardPage() {
           <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                {[t.time, t.room, t.name, t.email, t.phone, t.notes, t.actions].map((col) => (
+                {[t.time, t.room, t.name, t.email, t.province, t.phone, t.notes, t.actions].map((col) => (
                   <th key={col[lang]} className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide whitespace-nowrap">
                     {col[lang]}
                   </th>
@@ -127,6 +129,7 @@ export default function AdminDashboardPage() {
                   <td className="px-4 py-3 text-gray-600 whitespace-nowrap">{booking.room}</td>
                   <td className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">{booking.name}</td>
                   <td className="px-4 py-3 text-gray-500 whitespace-nowrap">{booking.email}</td>
+                  <td className="px-4 py-3 text-gray-500 whitespace-nowrap">{booking.province}</td>
                   <td className="px-4 py-3 text-gray-500 whitespace-nowrap">{booking.phone ?? '—'}</td>
                   <td className="px-4 py-3 text-gray-500 max-w-[180px] truncate">{booking.notes ?? '—'}</td>
                   <td className="px-4 py-3 whitespace-nowrap">
