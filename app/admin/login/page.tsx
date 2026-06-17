@@ -17,6 +17,7 @@ const t = {
   submitting: { es: 'Iniciando sesión...', en: 'Signing in...' },
   noAccount: { es: '¿Necesitas una cuenta?', en: 'Need an account?' },
   register: { es: 'Regístrate', en: 'Register' },
+  forgot: { es: '¿Olvidaste tu contraseña?', en: 'Forgot your password?' },
   errInvalid: { es: 'Correo o contraseña incorrectos.', en: 'Invalid email or password.' },
   errGeneric: { es: 'Ocurrió un error. Intenta de nuevo.', en: 'Something went wrong. Please try again.' },
 }
@@ -106,6 +107,11 @@ export default function AdminLoginPage() {
                   </svg>
                 )}
               </button>
+            </div>
+            <div className="text-right mt-2">
+              <Link href="/admin/forgot-password" className="text-sm text-gray-500 underline hover:text-gray-700">
+                {t.forgot[lang]}
+              </Link>
             </div>
           </div>
 

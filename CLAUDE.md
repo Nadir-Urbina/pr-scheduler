@@ -16,11 +16,13 @@ Full requirements: [PRD.md](PRD.md)
 npm run dev      # Start dev server (Turbopack, outputs to .next/dev)
 npm run build    # Production build (also Turbopack by default)
 npm run start    # Start production server
-npx eslint .     # Lint — next lint has been removed in Next.js 16, use eslint directly
+npm run lint     # Lint (= eslint; next lint was removed in Next.js 16)
 npx next typegen # Generate PageProps/LayoutProps/RouteContext type helpers
 ```
 
 No test runner is configured yet.
+
+Local env: copy `.env.local.example` → `.env.local` and fill in Firebase client + admin credentials, `RESEND_API_KEY`, and `CRON_SECRET`. `FIREBASE_PRIVATE_KEY` must keep its literal `\n` newlines and be wrapped in double quotes.
 
 ## Stack
 
@@ -28,18 +30,37 @@ No test runner is configured yet.
 |---|---|
 | Framework | Next.js 16.2 (App Router) |
 | UI | React 19.2, Tailwind CSS v4 |
-| Backend/DB | Firebase (Firestore + Auth) — **not yet wired up** |
-| Email | SendGrid or Resend — **not yet wired up** |
-| Hosting | Vercel |
+| Backend/DB | Firebase (Firestore + Auth) |
+| Email | Resend (confirmation + day-before reminders) |
+| Hosting | Vercel (cron via `vercel.json`) |
 
 ## Architecture
 
-App Router only — no `pages/` directory. All routes live under `app/`. The project is a fresh scaffold; no features are implemented yet.
+App Router only — no `pages/` directory. Everything lives under `app/`, `components/`, and `lib/`.
 
-Planned route structure (based on PRD):
-- `app/` — public booking interface (default language: Spanish)
-- `app/admin/` — protected dashboard (hidden from public nav)
-- `app/api/` — route handlers for bookings, auth, email batch jobs
+### Routes
+- `app/page.tsx` → `components/booking/BookingPage` — public booking flow (default Spanish): day select → `SlotGrid` → `BookingForm`, plus `CheckReservation` to look up an existing booking by email.
+- `app/admin/login`, `app/admin/register` — Firebase email/password auth (client SDK). Hidden from public nav.
+- `app/admin/(dashboard)/` — protected dashboard. The route-group `layout.tsx` is the auth gate: it subscribes to `onAuthStateChanged` and redirects to `/admin/login` if signed out. `page.tsx` lists/creates/edits/deletes bookings via `BookingModal`.
+
+### API route handlers (`app/api/`)
+- `bookings/` — **public**. `GET ?day=` returns taken `{room, slot}` pairs; `POST` creates a booking. The POST enforces **one session per person** via fuzzy name matching (`normalizeName` strips accents/case; `levenshtein` allows 1 edit for ≤6-char names, else 2) against the `nameNormalized` field, then sends a Resend confirmation email (awaited so the serverless fn doesn't exit early; errors swallowed so email failure never blocks the booking).
+- `reservations/` — **public**. `GET ?email=` looks up a user's own bookings.
+- `admin/bookings/` and `admin/bookings/[id]/` — **protected** (every handler calls `verifyAdminToken` first). Admin create/edit bypasses the name-duplicate check but enforces slot-uniqueness (`day`+`room`+`slot`).
+- `email/reminders/` — **cron only**. Gated by `CRON_SECRET` (Vercel sends it as `Authorization: Bearer`; `?secret=` works for local testing). Maps the current UTC weekday → conference day and emails all that day's attendees. Scheduled in `vercel.json` (`0 1 9,10,11 7 *` = Thu/Fri/Sat 01:00 UTC during the conference).
+
+### Firebase: two SDKs, two boundaries
+- `lib/firebase/client.ts` — **client SDK**, browser-safe, `NEXT_PUBLIC_*` config. Used in client components for auth.
+- `lib/firebase/admin.ts` — **admin SDK**, server-only, service-account credentials. Used exclusively in API route handlers for Firestore reads/writes.
+- Admin requests from the dashboard go through `lib/admin-fetch.ts`, which attaches the current user's ID token as a Bearer header; `lib/admin-auth.ts` verifies it server-side.
+
+### Data model & shared constants
+- Single Firestore collection `bookings`. Shape in `lib/types.ts` (`Booking` / `NewBooking`). Each doc also stores a `nameNormalized` field used only for duplicate detection.
+- `lib/schedule.ts` is the source of truth for `DAYS`, `ROOMS` (1–6), `SLOTS` (15 slots, 15:30–17:50 in 10-min steps, generated), `PROVINCES`, `DAY_LABELS`, and `formatSlot()`. All validation references these — keep new logic consistent with them.
+- At max 270 bookings, several handlers deliberately fetch the whole collection and filter in memory rather than building composite Firestore indexes.
+
+### i18n
+- No i18n library. `lib/context/LanguageContext` holds `lang` (`'es' | 'en'`, default `es`, persisted to `localStorage`). Each component defines a local `t` object keyed by language; email templates (`lib/email/templates.ts`) take a `lang` param. When adding UI strings, follow the existing `{ es, en }` pattern.
 
 ## Next.js 16 Breaking Changes
 
