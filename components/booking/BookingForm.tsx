@@ -1,9 +1,16 @@
 'use client'
 
 import { useState } from 'react'
+import { track } from '@vercel/analytics'
 import { DAY_LABELS, formatSlot, PROVINCES } from '@/lib/schedule'
 import { useLang } from '@/lib/context/LanguageContext'
 import type { Day, Room, Slot } from '@/lib/types'
+
+declare global {
+  interface Window {
+    fbq?: (...args: unknown[]) => void
+  }
+}
 
 interface Props {
   day: Day
@@ -81,6 +88,7 @@ export default function BookingForm({ day, room, slot, onBack, onSuccess }: Prop
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    track('confirm_booking_click', { day, room, slot })
     const errs = validate()
     if (Object.keys(errs).length) {
       setErrors(errs)
@@ -108,6 +116,8 @@ export default function BookingForm({ day, room, slot, onBack, onSuccess }: Prop
       })
 
       if (res.ok) {
+        // Meta Pixel conversion event — fired only on a confirmed booking.
+        window.fbq?.('track', 'Schedule', { content_category: 'prophetic_session' })
         setSuccess(true)
         return
       }

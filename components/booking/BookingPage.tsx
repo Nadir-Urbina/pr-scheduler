@@ -11,8 +11,12 @@ import BookingForm from './BookingForm'
 import CheckReservation from './CheckReservation'
 
 const t = {
-  title: { es: 'Reserva tu Sesión Profética', en: 'Book Your Prophetic Session' },
+  title: { es: 'Ministración Personal Profética', en: 'Book Your Prophetic Session' },
   subtitle: { es: 'Sesiones proféticas · La Cresta de La Ola', en: 'Prophetic sessions · La Cresta de La Ola' },
+  schedule: {
+    es: 'Las sesiones se llevarán a cabo los días 9, 10 y 11 de Julio, entre las 3:30 y 6:00 PM.',
+    en: 'Sessions will be held on July 9, 10 and 11, between 3:30 and 6:00 PM.',
+  },
   selectDay: { es: 'Selecciona un día', en: 'Select a day' },
   dayPlaceholder: { es: '— Elige un día —', en: '— Choose a day —' },
   selectSlot: { es: 'Elige un horario disponible', en: 'Choose an available time slot' },
@@ -52,6 +56,11 @@ export default function BookingPage() {
           </div>
           <LangToggle className="shrink-0 ml-4" />
         </div>
+
+        {/* Schedule info */}
+        <p className="text-sm text-gray-600 bg-blue-50 border border-blue-100 rounded-xl px-4 py-3 mb-8">
+          {t.schedule[lang]}
+        </p>
 
         {/* Day selector — hidden once a slot is selected */}
         <div className={`mb-6 ${selectedSlot ? 'hidden' : ''}`}>
